@@ -3,13 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: 'main'
-  workflow_dispatch:
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build_site:
@@ -18,26 +11,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 8
-
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm i
 
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
-          pnpm run build
+          npm run build
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v5
@@ -50,7 +37,6 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
       pages: write
       id-token: write
 
